@@ -3,34 +3,45 @@ import { Router } from "express";
 
 const router = Router();
 
-router.get("/", (req, res) => {
-  return res.send(Object.values(req.context.models.messages));
+router.get("/", async (req, res) => {
+  const messages = await req.context.models.Message.findAll();
+  return res.status(200).send(messages);
 });
 
-router.get("/:messageId", (req, res) => {
-  return res.send(req.context.models.messages[req.params.messageId]);
+router.get("/:messageId", async (req, res) => {
+  const id = req.params.messageId;
+  const message = await req.context.models.Message.findByPk(id);
+  return res.status(200).send(message);
 });
 
-router.post("/", (req, res) => {
-  const id = uuidv4();
+router.post("/", async (req, res) => {
   const message = {
     id,
     text: req.body.text,
     userId: req.context.me.id,
   };
-
-  req.context.models.messages[id] = message;
-
-  return res.send(message);
+  const createdMessage = await req.context.models.Message.create(message);
+  return res.status(201).send(createdMessage);
 });
 
-router.delete("/:messageId", (req, res) => {
-  const { [req.params.messageId]: message, ...otherMessages } =
-    req.context.models.messages;
+router.put("/:messageId", async (req, res) => {
+  const id = req.params.messageId;
+  const message = await req.context.models.Message.findByPk(id);
+  if (!message) {
+    return res.status(404).send("Message not found");
+  }
+  await message.update(req.body);
+  return res.status(200).send(message);
+});
 
-  req.context.models.messages = otherMessages;
-
-  return res.send(message);
+router.delete("/:messageId", async (req, res) => {
+  const id = req.params.messageId;
+  const message = await req.context.models.Message.findByPk(id);
+  if (!message) {
+    return res.status(404).send("Message not found");
+  }
+  await message.destroy();
+  return res.status(204).send();
 });
 
 export default router;
