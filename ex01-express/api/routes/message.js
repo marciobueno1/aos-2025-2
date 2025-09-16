@@ -16,7 +16,6 @@ router.get("/:messageId", async (req, res) => {
 
 router.post("/", async (req, res) => {
   const message = {
-    id,
     text: req.body.text,
     userId: req.context.me.id,
   };
