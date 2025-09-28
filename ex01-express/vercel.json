@@ -1,7 +1,0 @@
-{
-  "builds": [{ "src": "api/health.cjs", "use": "@vercel/node" }],
-  "routes": [
-    { "src": "/api/health", "dest": "/api/health.cjs" },
-    { "src": "/(.*)", "status": 404, "dest": "/api/health.cjs" }
-  ]
-}
