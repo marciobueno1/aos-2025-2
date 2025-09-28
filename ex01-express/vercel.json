@@ -2,6 +2,6 @@
   "builds": [{ "src": "api/*.js", "use": "@vercel/node" }],
   "routes": [
     { "src": "/api/health", "dest": "/api/health.js" },
-    { "src": "/(.*)", "dest": "/api/index.js" }
+    { "src": "/(.*)", "status": 404, "dest": "/api/health.js" }
   ]
 }
