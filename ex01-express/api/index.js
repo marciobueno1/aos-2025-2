@@ -1,16 +1,16 @@
-// api/index.js — lazy import para não tocar no DB em /api/health
+// api/index.js — handler único para Vercel
 let ready = false;
 let app = null;
 let initDb = null;
 
 export default async function handler(req, res) {
   try {
-    // rota de saúde: não importa nada, não conecta DB
+    // /api/health: responder sem tocar no DB, só pra checagem
     if (req.url && req.url.startsWith('/api/health')) {
       return res.status(200).json({ status: 'ok' });
     }
 
-    // importa o app somente quando precisar (evita erro antes de tempo)
+    // importa o app apenas quando necessário
     if (!app) {
       const mod = await import('../src/app.js');
       app = mod.default;
@@ -18,7 +18,7 @@ export default async function handler(req, res) {
     }
 
     if (!ready) {
-      await initDb();
+      await initDb();   // conecta/sincroniza uma única vez
       ready = true;
     }
 
