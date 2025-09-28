@@ -1,13 +1,13 @@
-// api/index.js
-import serverless from 'serverless-http';
+// api/index.js (Vercel)
 import app, { initDb } from '../src/app.js';
 
-let handler;
+let ready = false;
 
-export default async function(req, res) {
-  if (!handler) {
-    await initDb();
-    handler = serverless(app);
+export default async function handler(req, res) {
+  if (!ready) {
+    await initDb();   // conecta e sincroniza uma única vez
+    ready = true;
   }
-  return handler(req, res);
+  // Express é um handler (req, res)
+  return app(req, res);
 }
