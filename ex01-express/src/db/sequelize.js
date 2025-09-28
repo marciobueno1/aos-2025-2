@@ -1,7 +1,12 @@
 import 'dotenv/config';
+// 👇 estes dois imports garantem que a Vercel bundle os drivers do Postgres
+import 'pg';
+import 'pg-hstore';
 import { Sequelize } from 'sequelize';
 
-const hasUrl = typeof process.env.DATABASE_URL === 'string' && process.env.DATABASE_URL.trim().length > 0;
+const hasUrl =
+  typeof process.env.DATABASE_URL === 'string' &&
+  process.env.DATABASE_URL.trim().length > 0;
 
 const sequelize = hasUrl
   ? new Sequelize(process.env.DATABASE_URL, {
