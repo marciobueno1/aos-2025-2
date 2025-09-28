@@ -4,7 +4,8 @@
   "description": "Tutorial de Node.JS + Express + PostgreSQL",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon --exec babel-node api/index.js"
+   "start": "node api/index.js",
+    "dev": "nodemon api/index.js"
   },
   "keywords": [
     "node",

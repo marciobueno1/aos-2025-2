@@ -1,34 +1,25 @@
-import Sequelize from "sequelize";
+import getUserModel from './user.js';
+import getMessageModel from './message.js';
+import { Sequelize } from 'sequelize';
 
-import getUserModel from "./user";
-import getMessageModel from "./message";
-
-//POSTGRES_URL
-const sequelize = new Sequelize(process.env.POSTGRES_URL, {
-  dialect: "postgres",
-  protocol: "postgres",
-  // logging: false, // Disable SQL query logging
-  dialectOptions: {
-    // Necessary for SSL on NeonDB, Render.com and other providers
-    ssl: {
-      require: true,
-      rejectUnauthorized: false,
-    },
-  },
-  dialectModule: require("pg"),
+// 1. Cria a instância do Sequelize usando a URL do banco de dados do .env
+const sequelize = new Sequelize(process.env.DATABASE_URL, {
+  dialect: 'postgres',
 });
 
+// 2. Carrega os modelos
 const models = {
-  User: getUserModel(sequelize, Sequelize),
-  Message: getMessageModel(sequelize, Sequelize),
+  User: getUserModel(sequelize, Sequelize.DataTypes),
+  Message: getMessageModel(sequelize, Sequelize.DataTypes),
 };
 
+// 3. Define as associações entre os modelos
 Object.keys(models).forEach((key) => {
-  if ("associate" in models[key]) {
+  if ('associate' in models[key]) {
     models[key].associate(models);
   }
 });
 
 export { sequelize };
-
 export default models;
+

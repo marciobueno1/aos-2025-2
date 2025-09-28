@@ -1,11 +1,9 @@
-import session from "./session";
-import user from "./user";
-import message from "./message";
-import root from "./root";
+import userRoutes from './user.js';
+import messageRoutes from './message.js';
 
+// Exportamos apenas as rotas que nosso projeto utiliza
 export default {
-  root,
-  session,
-  user,
-  message,
+  userRoutes,
+  messageRoutes,
 };
+
