@@ -3,7 +3,7 @@ import { DataTypes } from 'sequelize';
 const getMessageModel = (sequelize) => {
   const Message = sequelize.define('message', {
     text: {
-      type: DataTypes.STRING, // Agora 'DataTypes' está definido
+      type: DataTypes.STRING, 
       allowNull: false,
       validate: {
         notEmpty: true,

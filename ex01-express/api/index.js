@@ -1,26 +1,23 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-// CORREÇÃO: Apontamos para os arquivos index.js específicos dentro das pastas
+
 import models, { sequelize } from './models/index.js';
 import routes from './routes/index.js';
 
 const app = express();
 
-// Middlewares essenciais
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Middleware customizado para adicionar os modelos ao contexto de cada requisição
 app.use((req, res, next) => {
   req.context = {
     models,
   };
   next();
 });
-
-// Registra as rotas da nossa API
 app.use('/users', routes.userRoutes);
 app.use('/messages', routes.messageRoutes);
 

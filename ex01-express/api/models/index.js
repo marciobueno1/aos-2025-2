@@ -1,4 +1,4 @@
-import pg from 'pg'; // CORREÇÃO DEFINITIVA: Força a Vercel a incluir o pacote 'pg' no build.
+import pg from 'pg'; // CORREÇÃO DEFINITIVA: Força o Vercel a incluir o pacote 'pg' no build.
 import { Sequelize } from 'sequelize';
 import getUserModel from './user.js';
 import getMessageModel from './message.js';
