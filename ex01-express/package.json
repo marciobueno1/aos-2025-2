@@ -4,7 +4,8 @@
   "description": "Tutorial de Node.JS + Express + PostgreSQL",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon --exec babel-node api/index.js"
+    "start": "nodemon --exec babel-node api/index.js",
+    "dev": "nodemon --exec babel-node src/server.js"
   },
   "keywords": [
     "node",
@@ -18,11 +19,15 @@
     "@babel/node": "^7.28.0",
     "@babel/preset-env": "^7.28.3",
     "cors": "^2.8.5",
-    "dotenv": "^17.2.1",
+    "dotenv": "^17.2.2",
     "express": "^5.1.0",
-    "nodemon": "^3.1.10",
     "pg": "^8.16.3",
+    "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.7",
+    "serverless-http": "^4.0.0",
     "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
   }
 }

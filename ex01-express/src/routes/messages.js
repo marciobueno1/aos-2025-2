@@ -1,11 +1,9 @@
-cat > src/routes/messages.js << 'EOF'
 import express from 'express';
 import Message from '../models/Message.js';
 import User from '../models/User.js';
 
 const router = express.Router();
 
-// LIST (com user associado)
 router.get('/', async (req, res, next) => {
   try {
     const list = await Message.findAll({ include: [{ model: User, as: 'user' }] });
@@ -13,7 +11,6 @@ router.get('/', async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
-// GET by ID
 router.get('/:id', async (req, res, next) => {
   try {
     const m = await Message.findByPk(req.params.id, { include: [{ model: User, as: 'user' }] });
@@ -22,7 +19,6 @@ router.get('/:id', async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
-// CREATE
 router.post('/', async (req, res, next) => {
   try {
     const { text, userId } = req.body;
@@ -33,7 +29,6 @@ router.post('/', async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
-// UPDATE
 router.put('/:id', async (req, res, next) => {
   try {
     const m = await Message.findByPk(req.params.id);
@@ -43,7 +38,6 @@ router.put('/:id', async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
-// DELETE
 router.delete('/:id', async (req, res, next) => {
   try {
     const deleted = await Message.destroy({ where: { id: req.params.id } });
@@ -53,4 +47,3 @@ router.delete('/:id', async (req, res, next) => {
 });
 
 export default router;
-EOF
