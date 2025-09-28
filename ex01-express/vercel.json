@@ -2,14 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "ex01-express/api/index.js",  
+      "src": "api/index.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "ex01-express/api/index.js"
+      "dest": "api/index.js"
     }
   ]
 }
