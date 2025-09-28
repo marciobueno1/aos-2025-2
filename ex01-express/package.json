@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Tutorial de Node.JS + Express + PostgreSQL",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "nodemon --exec babel-node api/index.js",
     "dev": "nodemon --exec babel-node src/server.js"
