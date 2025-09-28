@@ -2,7 +2,8 @@
   "name": "ex01-express",
   "version": "1.0.0",
   "description": "Tutorial de Node.JS + Express + PostgreSQL",
-  "main": "index.js",
+  "main": "api/index.js",
+  "type":"module",
   "scripts": {
     "start": "node api/index.js",
     "dev": "nodemon api/index.js"
@@ -12,7 +13,7 @@
     "express",
     "postgres"
   ],
-  "author": "Marcio Bueno",
+  "author": "Kaiki Barros",
   "license": "MIT",
   "dependencies": {
     "@babel/core": "^7.28.3",
