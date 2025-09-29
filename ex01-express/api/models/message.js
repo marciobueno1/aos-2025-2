@@ -7,6 +7,13 @@ const getMessageModel = (sequelize, { DataTypes }) => {
         notEmpty: true,
       },
     },
+    userId: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: 'users',
+        key: 'id',
+      },
+    },
   });
 
   Message.associate = (models) => {

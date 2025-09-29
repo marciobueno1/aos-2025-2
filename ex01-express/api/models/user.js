@@ -1,3 +1,5 @@
+import bcrypt from 'bcrypt';
+
 const getUserModel = (sequelize, { DataTypes }) => {
   const User = sequelize.define("user", {
     username: {
@@ -16,10 +18,25 @@ const getUserModel = (sequelize, { DataTypes }) => {
         notEmpty: true,
       },
     },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+      },
+    },
   });
 
   User.associate = (models) => {
     User.hasMany(models.Message, { onDelete: "CASCADE" });
+  };
+
+  User.beforeCreate(async (user) => {
+    user.password = await bcrypt.hash(user.password, 8);
+  });
+
+  User.prototype.validPassword = async function (password) {
+    return await bcrypt.compare(password, this.password);
   };
 
   User.findByLogin = async (login) => {
