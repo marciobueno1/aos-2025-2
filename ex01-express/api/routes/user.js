@@ -1,82 +1,27 @@
 import { Router } from "express";
+import userController from "../controllers/userController";
+import { isAuthenticated, isResourceOwner } from "../middleware/authMiddleware";
 
 const router = Router();
 
-router.get("/", async (req, res) => {
-  try {
-    const users = await req.context.models.User.findAll();
-    return res.send(users);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).send("Internal Server Error");
-  }
-});
+router.get("/", userController.getAllUsers);
 
-router.get("/:userId", async (req, res) => {
-  try {
-    const user = await req.context.models.User.findByPk(req.params.userId);
-    if (!user) {
-      return res.sendStatus(404);
-    }
-    return res.send(user);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).send("Internal Server Error");
-  }
-});
+router.get("/:userId", userController.getUserById);
 
-router.post("/", async (req, res) => {
-  try {
-    const user = await req.context.models.User.create({
-      username: req.body.username,
-      email: req.body.email,
-    });
+router.post("/", userController.createUser);
 
-    return res.status(201).send(user);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).send("Internal Server Error");
-  }
-});
+router.put(
+  "/:userId",
+  isAuthenticated,
+  isResourceOwner('User'),
+  userController.updateUser
+);
 
-router.put("/:userId", async (req, res) => {
-  try {
-    if (!req.context.me) {
-      return res.status(401).send("Unauthorized");
-    }
-    const user = await req.context.models.User.findByPk(req.params.userId);
-    if (!user) {
-      return res.sendStatus(404);
-    }
-    if (user.id !== req.context.me.id) {
-      return res.status(403).send("Forbidden");
-    }
-    await user.update(req.body);
-    return res.send(user);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).send("Internal Server Error");
-  }
-});
-
-router.delete("/:userId", async (req, res) => {
-  try {
-    if (!req.context.me) {
-      return res.status(401).send("Unauthorized");
-    }
-    const user = await req.context.models.User.findByPk(req.params.userId);
-    if (!user) {
-      return res.sendStatus(404);
-    }
-    if (user.id !== req.context.me.id) {
-      return res.status(403).send("Forbidden");
-    }
-    const result = await user.destroy();
-    return res.sendStatus(204);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).send("Internal Server Error");
-  }
-});
+router.delete(
+  "/:userId",
+  isAuthenticated,
+  isResourceOwner('User'),
+  userController.deleteUser
+);
 
 export default router;

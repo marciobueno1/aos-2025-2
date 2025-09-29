@@ -4,6 +4,7 @@ import express from "express";
 
 import models, { sequelize } from "./models";
 import routes from "./routes";
+import errorMiddleware from "./middleware/errorMiddleware"; // Import the error middleware
 
 const app = express();
 app.set("trust proxy", true);
@@ -24,7 +25,7 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Código para injetar no context o usuário que está logado e os models
+// Código para injetar no context o usuario que esta logado e os models
 app.use(async (req, res, next) => {
   req.context = {
     models,
@@ -42,6 +43,9 @@ app.use("/", routes.root);
 app.use("/session", routes.session);
 app.use("/users", routes.user);
 app.use("/messages", routes.message);
+
+// Add the error middleware as the last middleware
+app.use(errorMiddleware);
 
 const port = process.env.PORT ?? 3000;
 
