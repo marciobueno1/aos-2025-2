@@ -16,6 +16,12 @@ app.use((req, res, next) => {
   req.context = {
     models,
   };
+  try {
+    req.context.me = await models.User.findByPk(1);
+  } catch (error) {
+    console.error(error);
+    // If there is an error, we just ignore it and me will be undefined
+  }
   next();
 });
 app.use('/users', routes.userRoutes);
@@ -35,6 +41,8 @@ sequelize.sync({ force: eraseDatabaseOnSync }).then(() => {
   app.listen(process.env.PORT, () => {
     console.log(`API escutando na porta ${process.env.PORT}!`);
   });
+}).catch((error) => {
+  console.error("Error starting the server:", error);
 });
 
 export default app;
