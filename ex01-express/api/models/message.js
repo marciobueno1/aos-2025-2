@@ -1,7 +1,9 @@
-const getMessageModel = (sequelize, { DataTypes }) => {
-  const Message = sequelize.define("message", {
+import { DataTypes } from 'sequelize';
+
+const getMessageModel = (sequelize) => {
+  const Message = sequelize.define('message', {
     text: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING, 
       allowNull: false,
       validate: {
         notEmpty: true,
@@ -17,3 +19,4 @@ const getMessageModel = (sequelize, { DataTypes }) => {
 };
 
 export default getMessageModel;
+

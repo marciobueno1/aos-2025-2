@@ -1,34 +1,32 @@
-import Sequelize from "sequelize";
+import pg from 'pg'; // CORREÇÃO DEFINITIVA: Força o Vercel a incluir o pacote 'pg' no build.
+import { Sequelize } from 'sequelize';
+import getUserModel from './user.js';
+import getMessageModel from './message.js';
 
-import getUserModel from "./user";
-import getMessageModel from "./message";
-
-//POSTGRES_URL
-const sequelize = new Sequelize(process.env.POSTGRES_URL, {
-  dialect: "postgres",
-  protocol: "postgres",
-  // logging: false, // Disable SQL query logging
+// 1. Cria a instância do Sequelize usando a URL do banco de dados do .env
+const sequelize = new Sequelize(process.env.DATABASE_URL, {
+  dialect: 'postgres',
+  dialectModule: pg, // Adiciona o módulo explicitamente para o Sequelize
   dialectOptions: {
-    // Necessary for SSL on NeonDB, Render.com and other providers
     ssl: {
       require: true,
-      rejectUnauthorized: false,
+      rejectUnauthorized: false, 
     },
   },
-  dialectModule: require("pg"),
 });
 
+// 2. Carrega os modelos
 const models = {
-  User: getUserModel(sequelize, Sequelize),
-  Message: getMessageModel(sequelize, Sequelize),
+  User: getUserModel(sequelize),
+  Message: getMessageModel(sequelize),
 };
 
+// 3. Define as associações entre os modelos
 Object.keys(models).forEach((key) => {
-  if ("associate" in models[key]) {
+  if ('associate' in models[key]) {
     models[key].associate(models);
   }
 });
 
 export { sequelize };
-
 export default models;

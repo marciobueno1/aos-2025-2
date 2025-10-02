@@ -1,32 +1,18 @@
-import "dotenv/config";
-import cors from "cors";
-import express from "express";
+import 'dotenv/config';
+import express from 'express';
+import cors from 'cors';
 
-import models, { sequelize } from "./models";
-import routes from "./routes";
-import errorMiddleware from "./middleware/errorMiddleware"; // Import the error middleware
+import models, { sequelize } from './models/index.js';
+import routes from './routes/index.js';
 
 const app = express();
-app.set("trust proxy", true);
 
-var corsOptions = {
-  origin: ["http://example.com", "*"],
-  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
-};
-app.use(cors(corsOptions));
 
-app.use((req, res, next) => {
-  console.log(`${req.method} ${req.path} - ${req.ip}`);
-  next();
-});
-
-// Código para conseguir extrair o conteúdo do body da mensagem HTTP
-// e armazenar na propriedade req.body (utiliza o body-parser)
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Código para injetar no context o usuario que esta logado e os models
-app.use(async (req, res, next) => {
+app.use((req, res, next) => {
   req.context = {
     models,
   };
@@ -38,69 +24,26 @@ app.use(async (req, res, next) => {
   }
   next();
 });
+app.use('/users', routes.userRoutes);
+app.use('/messages', routes.messageRoutes);
 
-app.use("/", routes.root);
-app.use("/session", routes.session);
-app.use("/users", routes.user);
-app.use("/messages", routes.message);
+// Rota de boas-vindas para a raiz
+app.get('/', (req, res) => {
+  res.send('<h1>API com Sequelize e PostgreSQL</h1><p>Acesse /users ou /messages para testar.</p>');
+});
 
-// Add the error middleware as the last middleware
-app.use(errorMiddleware);
+// Sincroniza o banco de dados e inicia o servidor
+const eraseDatabaseOnSync = false; // CUIDADO: true apaga o banco a cada reinicialização
 
-const port = process.env.PORT ?? 3000;
-
-const eraseDatabaseOnSync = process.env.ERASE_DATABASE === "true";
-
-sequelize.sync({ force: eraseDatabaseOnSync }).then(async () => {
-  if (eraseDatabaseOnSync) {
-    createUsersWithMessages();
-  }
-
-  app.listen(port, () => {
-    console.log(`Example app listening on port ${port}!`);
+sequelize.sync({ force: eraseDatabaseOnSync }).then(() => {
+  console.log('Banco de dados sincronizado!');
+  
+  app.listen(process.env.PORT, () => {
+    console.log(`API escutando na porta ${process.env.PORT}!`);
   });
 }).catch((error) => {
   console.error("Error starting the server:", error);
 });
 
-const createUsersWithMessages = async () => {
-  try {
-    await models.User.create(
-      {
-        username: "rwieruch",
-        email: "rwieruch@email.com",
-        messages: [
-          {
-            text: "Published the Road to learn React",
-          },
-          {
-            text: "Published also the Road to learn Express + PostgreSQL",
-          },
-        ],
-      },
-      {
-        include: [models.Message],
-      }
-    );
+export default app;
 
-    await models.User.create(
-      {
-        username: "ddavids",
-        email: "ddavids@email.com",
-        messages: [
-          {
-            text: "Happy to release ...",
-          },
-          {
-            text: "Published a complete ...",
-          },
-        ],
-      },
-      {
-        include: [models.Message],
-      }
-    );
-  } catch (error) {
-    console.error(error);
-  }
-};
