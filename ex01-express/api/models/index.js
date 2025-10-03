@@ -2,6 +2,7 @@ import pg from 'pg'; // CORREÇÃO DEFINITIVA: Força o Vercel a incluir o pacot
 import { Sequelize } from 'sequelize';
 import getUserModel from './user.js';
 import getMessageModel from './message.js';
+import getTarefaModel from './tarefa.js';
 
 // 1. Cria a instância do Sequelize usando a URL do banco de dados do .env
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
@@ -19,6 +20,7 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
 const models = {
   User: getUserModel(sequelize),
   Message: getMessageModel(sequelize),
+  Tarefa: getTarefaModel(sequelize),
 };
 
 // 3. Define as associações entre os modelos

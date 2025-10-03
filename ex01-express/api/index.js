@@ -5,6 +5,7 @@ import cors from 'cors';
 import models, { sequelize } from './models/index.js';
 import routes from './routes/index.js';
 
+
 const app = express();
 
 
@@ -18,8 +19,10 @@ app.use((req, res, next) => {
   };
   next();
 });
+
 app.use('/users', routes.userRoutes);
 app.use('/messages', routes.messageRoutes);
+app.use('/tarefas', routes.tarefaRoutes);
 
 // Rota de boas-vindas para a raiz
 app.get('/', (req, res) => {
@@ -38,4 +41,3 @@ sequelize.sync({ force: eraseDatabaseOnSync }).then(() => {
 });
 
 export default app;
-
