@@ -2,10 +2,12 @@ import { Router } from 'express';
 
 const router = Router();
 
-// Listar todas as tarefas
 router.get('/', async (req, res) => {
   try {
-    const tarefas = await req.context.models.Tarefa.findAll();
+ 
+    const tarefas = await req.context.models.Tarefa.findAll({
+      order: [['id', 'ASC']],
+    });
     return res.send(tarefas);
   } catch (error) {
     console.error(error);
@@ -13,7 +15,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Obter uma tarefa pelo ID
 router.get('/:id', async (req, res) => {
   try {
     const tarefa = await req.context.models.Tarefa.findByPk(req.params.id);
@@ -27,13 +28,11 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Criar uma nova tarefa
 router.post('/', async (req, res) => {
   try {
-    // Como não há middleware de autenticação, o userId precisa de ser enviado no corpo da requisição
     const { descricao, concluida, userId } = req.body;
 
-    // Verifica se o utilizador autor da tarefa existe
+   
     const user = await req.context.models.User.findByPk(userId);
     if (!user) {
       return res.status(404).send({ message: 'Utilizador autor não encontrado.' });
@@ -42,7 +41,7 @@ router.post('/', async (req, res) => {
     const tarefa = await req.context.models.Tarefa.create({
       descricao: descricao,
       concluida: concluida,
-      userId: userId, // Associamos a tarefa ao utilizador enviado no corpo
+      userId: userId, 
     });
     return res.status(201).send(tarefa);
   } catch (error) {
@@ -54,7 +53,6 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Atualizar uma tarefa
 router.put('/:id', async (req, res) => {
   try {
     const tarefa = await req.context.models.Tarefa.findByPk(req.params.id);
@@ -77,7 +75,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// Apagar uma tarefa
+
 router.delete('/:id', async (req, res) => {
   try {
     const result = await req.context.models.Tarefa.destroy({
@@ -86,7 +84,7 @@ router.delete('/:id', async (req, res) => {
     if (result === 0) {
       return res.status(404).send({ message: 'Tarefa não encontrada.' });
     }
-    return res.status(204).send(); // 204 No Content
+    return res.status(204).send(); 
   } catch (error) {
     console.error(error);
     return res.status(500).send({ message: 'Erro ao apagar tarefa.' });
@@ -94,3 +92,4 @@ router.delete('/:id', async (req, res) => {
 });
 
 export default router;
+
