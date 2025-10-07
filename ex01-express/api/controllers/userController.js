@@ -16,6 +16,7 @@ const userController = {
     const user = await req.context.models.User.create({
       username: req.body.username,
       email: req.body.email,
+      password: req.body.password,
     });
 
     return res.status(201).send(user);

@@ -1,6 +1,7 @@
 import "dotenv/config";
 import cors from "cors";
 import express from "express";
+import jwt from 'jsonwebtoken';
 
 import models, { sequelize } from "./models";
 import routes from "./routes";
@@ -25,24 +26,30 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Código para injetar no context o usuario que esta logado e os models
 app.use(async (req, res, next) => {
   req.context = {
     models,
   };
-  try {
-    req.context.me = await models.User.findByPk(1);
-  } catch (error) {
-    console.error(error);
-    // If there is an error, we just ignore it and me will be undefined
+
+  const authHeader = req.headers.authorization;
+  if (authHeader) {
+    const token = authHeader.split(' ')[1];
+    try {
+      const payload = jwt.verify(token, process.env.JWT_SECRET);
+      req.context.me = await models.User.findByPk(payload.id);
+    } catch (e) {
+      // Token is invalid
+    }
   }
+
   next();
 });
 
 app.use("/", routes.root);
-app.use("/session", routes.session);
+app.use("/auth", routes.auth);
 app.use("/users", routes.user);
 app.use("/messages", routes.message);
+app.use("/tarefas", routes.tarefa);
 
 // Add the error middleware as the last middleware
 app.use(errorMiddleware);
