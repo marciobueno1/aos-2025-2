@@ -4,6 +4,7 @@ import express from "express";
 
 import models, { sequelize } from "./models";
 import routes from "./routes";
+import auth from "./middleware/auth";
 
 const app = express();
 app.set("trust proxy", true);
@@ -28,12 +29,16 @@ app.use(express.urlencoded({ extended: true }));
 app.use(async (req, res, next) => {
   req.context = {
     models,
-    me: await models.User.findByPk(1),
   };
   next();
 });
 
 app.use("/", routes.root);
+app.use("/login", routes.login);
+
+// A partir daqui, todas as rotas exigirão autenticação
+app.use(auth);
+
 app.use("/session", routes.session);
 app.use("/users", routes.user);
 app.use("/messages", routes.message);
@@ -58,6 +63,7 @@ const createUsersWithMessages = async () => {
     {
       username: "rwieruch",
       email: "rwieruch@email.com",
+      password: "password123",
       messages: [
         {
           text: "Published the Road to learn React",
@@ -76,6 +82,7 @@ const createUsersWithMessages = async () => {
     {
       username: "ddavids",
       email: "ddavids@email.com",
+      password: "password123",
       messages: [
         {
           text: "Happy to release ...",

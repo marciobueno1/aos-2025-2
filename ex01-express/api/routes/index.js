@@ -3,6 +3,7 @@ import user from "./user";
 import message from "./message";
 import root from "./root";
 import tarefa from "./tarefa";
+import login from "./login";
 
 export default {
   root,
@@ -10,4 +11,5 @@ export default {
   user,
   message,
   tarefa,
+  login,
 };
