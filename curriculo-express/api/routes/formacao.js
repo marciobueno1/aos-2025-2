@@ -2,7 +2,6 @@ import { Router } from 'express';
 
 const router = Router();
 
-// Listar todas as formações de uma Pessoa específica
 router.get('/pessoas/:pessoaId/formacoes', async (req, res) => {
   try {
     const formacoes = await req.context.models.Formacao.findAll({
@@ -30,7 +29,6 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Criar uma nova formação para uma Pessoa específica
 router.post('/pessoas/:pessoaId/formacoes', async (req, res) => {
   try {
     const pessoa = await req.context.models.Pessoa.findByPk(req.params.pessoaId);
@@ -56,7 +54,10 @@ router.post('/pessoas/:pessoaId/formacoes', async (req, res) => {
   }
 });
 
-// Atualizar uma formação existente
+
+
+
+
 router.put('/:id', async (req, res) => {
   try {
     const formacao = await req.context.models.Formacao.findByPk(req.params.id);

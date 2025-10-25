@@ -1,22 +1,24 @@
-    {
+{
       "name": "ex01-express-sequelize",
       "version": "1.0.0",
       "description": "API com Express, Sequelize e PostgreSQL para a disciplina AOS-2025-2.",
       "main": "api/index.js",
       "type": "module",
       "scripts": {
-        "start": "node api/index.js",
-        "dev": "nodemon api/index.js"
+            "start": "node api/index.js",
+            "dev": "nodemon api/index.js"
       },
       "dependencies": {
-        "cors": "^2.8.5",
-        "dotenv": "^16.4.5",
-        "express": "^4.19.2",
-        "pg": "^8.12.0",
-        "sequelize": "^6.37.3",
-        "uuid": "^10.0.0"
+            "cors": "^2.8.5",
+            "dotenv": "^16.4.5",
+            "dotenv-safe": "^9.1.0",
+            "express": "^4.19.2",
+            "jsonwebtoken": "^9.0.2",
+            "pg": "^8.12.0",
+            "sequelize": "^6.37.3",
+            "uuid": "^10.0.0"
       },
       "devDependencies": {
-        "nodemon": "^3.1.4"
+            "nodemon": "^3.1.4"
       }
-    }
+}

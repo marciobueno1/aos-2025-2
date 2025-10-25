@@ -1,15 +1,15 @@
-const getAllexperienciasByPessoa = async (req, res) => {
+const getAllExperienciasByPessoa = async (req, res) => {
     try {
         const pessoaId = req.params.pessoaId;
         const pessoa = await req.context.models.Pessoa.findByPk(pessoaId);
         if (!pessoa) {
             return res.status(404).send({ message: 'Pessoa não encontrada.'});
         }
-        const experiencias = await req.context.models.Experiencia.findAll({
+        const experiencia = await req.context.models.Experiencia.findAll({
             where: { pessoaId: pessoaId },
             order: [['dataInicio', 'DESC']],
         });
-        return res.send(experiencias);
+        return res.send(experiencia);
     } catch (error){
         console.error('Erro em getAllExperienciasByPessoa:', error);
         return res.status(500).send({ message: 'Erro interno do servidor.'});
@@ -29,7 +29,6 @@ const getExperienciaById = async (req, res) => {
         return res.status(500).send({ message: 'Erro interno do servdor ao obter Experiencia.'});
     }
 };
-
 
 
 
@@ -54,49 +53,53 @@ const createExperiencia = async (req, res) => {
 };
 
 const updateExperiencia = async (req, res) => {
-    try {
-        const experiencia = await req.context.models.Experiencia.findByPk(req.params.id);
-        if (!experiencia) {
-            return res.status(404).send({ message: 'Experiencia não encontrada.'});
-        }
-        await experiencia.update({
-            name: req.body.name,
-            email: req.body.email,
-            resumo: req.body.resumo,
-            linkedinUrl: req.body.linkedinUrl,
-            githubUrl: req.body.githubUrl,
-        });
-        return res.send(experiencia);
-    } catch (error) {
-        if (error.name == 'SequelizeValidationError' || error.name == 'SequelizeUniqueConstraintError') {
+  try {
+    
+    const experiencia = await req.context.models.Experiencia.findByPk(req.params.id);
+    if (!experiencia) { // Verificação extra
+        return res.status(404).send({ message: 'Experiência não encontrada.' });
+    }
 
-            
-            return res.status(400).send({message: error.errors.map(e => e.message).join(', ')});
+    await experiencia.update({
+      cargo: req.body.cargo,
+      empresa: req.body.empresa,
+      dataInicio: req.body.dataInicio,
+      dataFim: req.body.dataFim,
+      descricao: req.body.descricao,
+    });
+    await experiencia.reload();
+    return res.send(experiencia);
+  } catch (error) {
+    if (error.name === 'SequelizeValidationError') {
+      return res.status(400).send({ message: error.errors.map(e => e.message).join(', ') });
     }
-        console.error('Erro em updatePessoa:', error);
-        return res.status(500).send({ message: 'Erro interno do servidor ao atualizar Experiencia.'});
-    }
+    console.error('Erro em updateExperiencia:', error);
+    return res.status(500).send({ message: 'Erro ao atualizar experiência.' });
+  }
 };
 
-const deletePessoa = async (req, res) => {
-    try {
-        const result = await req.context.models.Pessoa.destroy({ 
-            where: { id: req.params.id }
-        });
-        if (result === 0) {
-            return res.status(404).send({ message: 'Pessoa não encontrada.'});
-        }
-        return res.sendStatus(204); // No Content
-    } catch (error) {
-        console.error('Erro em deletePessoa:', error);
-        return res.status(500).send({ message: 'Erro interno do servidor ao deletar pessoa.'});
+
+const deleteExperiencia = async (req, res) => {
+  try {
+    // A existência e propriedade são validadas pelo middleware isResourceOwner('Experiencia')
+    const result = await req.context.models.Experiencia.destroy({
+      where: { id: req.params.id }, // O middleware já garantiu que pertence ao utilizador
+    });
+    if (result === 0) {
+      return res.status(404).send({ message: 'Experiência não encontrada ou acesso negado.' });
     }
+    return res.status(204).send(); // 204 No Content
+  } catch (error) {
+    console.error('Erro em deleteExperiencia:', error);
+    return res.status(500).send({ message: 'Erro ao deletar experiência.' });
+  }
 };
+
 
 export default {
-    getAllpessoas,
-    getPessoaById,
-    createPessoa,
-    updatePessoa,
-    deletePessoa,
+    getAllExperienciasByPessoa,
+    getExperienciaById,
+    createExperiencia,
+    updateExperiencia,
+    deleteExperiencia,
 };

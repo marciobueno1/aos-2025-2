@@ -1,35 +1,38 @@
-import Sequelize from "sequelize"
+import { Sequelize } from 'sequelize';
+import pg from 'pg';
 
-import getPessoaModel from "./pessoa.js";
-import getExperienciaModel from "./experiencia.js";
-import getFormacaoModel from "./formacao.js";
-import getHabilidadesModel from "./habilidades.js";
+import getPessoaModel from './pessoa.js';
+import getExperienciaModel from './experiencia.js';
+import getFormacaoModel from './formacao.js';
+import getHabilidadeModel from './habilidade.js';
 
-const sequelize = new Sequelize(
-  process.env.DB_NAME,
-  process.env.DB_USER,
-  process.env.DB_PASSWORD,
-  {
-    host: process.env.DB_HOST,
-    dialect: "mysql",
+const sequelize = new Sequelize(process.env.DATABASE_URL, {
+  dialect: 'postgres',
+  dialectModule: pg,
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false,
+    },
+  },
+});
+
+// Carrega cada modelo, passando a instância do sequelize
+const models = {
+  Pessoa: getPessoaModel(sequelize),
+  Experiencia: getExperienciaModel(sequelize),
+  Formacao: getFormacaoModel(sequelize),
+  Habilidade: getHabilidadeModel(sequelize),
+};
+
+// Executa o método 'associate' de cada modelo (se existir)
+Object.keys(models).forEach((key) => {
+  if ('associate' in models[key]) {
+    models[key].associate(models);
   }
-);
-
-const Pessoa = getPessoaModel(sequelize, Sequelize.DataTypes);
-const Experiencia = getExperienciaModel(sequelize, Sequelize.DataTypes);
-const Formacao = getFormacaoModel(sequelize, Sequelize.DataTypes);
-const Habilidades = getHabilidadesModel(sequelize, Sequelize.DataTypes);
-
-Pessoa.hasMany(Experiencia, { as: 'experiencias', foreignKey: 'pessoaId' });
-Experiencia.belongsTo(Pessoa, { foreignKey: 'pessoaId' });
-
-Pessoa.hasMany(Formacao, { as: 'formacoes', foreignKey: 'pessoaId' });
-Formacao.belongsTo(Pessoa, { foreignKey: 'pessoaId' });
-
-Pessoa.hasMany(Habilidades, { as: 'habilidades', foreignKey: 'pessoaId' });
-Habilidades.belongsTo(Pessoa, { foreignKey: 'pessoaId' });
-
-export { sequelize, Pessoa, Experiencia, Formacao, Habilidades };   
+});
 
 
-//revisar
+export { sequelize };
+export default models; 
+

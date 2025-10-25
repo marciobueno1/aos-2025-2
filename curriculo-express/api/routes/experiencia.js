@@ -2,10 +2,6 @@ import { Router } from 'express';
 
 const router = Router();
 
-// Exemplo: GET /pessoas/1/experiencias -> Lista experiências da PessFoa 1
-// Exemplo: POST /pessoas/1/experiencias -> Cria experiência para a Pessoa 1
-
-// Listar todas as experiências de uma Pessoa específica
 router.get('/pessoas/:pessoaId/experiencias', async (req, res) => {
     try {
         const experiencias = await req.context.models.Experiencia.findAll({
@@ -19,7 +15,6 @@ router.get('/pessoas/:pessoaId/experiencias', async (req, res) => {
     }
 });
 
-// Obter uma experiência específica pelo ID
 router.get('/:id', async (req, res) => {
     try {
         const experiencia = await req.context.models.Experiencia.findByPk(req.params.id);
@@ -33,8 +28,6 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-
-// Criar uma nova experiência para uma Pessoa específica
 router.post('/pessoas/:pessoaId/experiencias', async (req, res) => {
     try {
         // Verifica se a Pessoa existe
@@ -61,7 +54,7 @@ router.post('/pessoas/:pessoaId/experiencias', async (req, res) => {
     }
 });
 
-// Atualizar uma experiência existente
+
 router.put('/:id', async (req, res) => {
     try {
         const experiencia = await req.context.models.Experiencia.findByPk(req.params.id);
@@ -75,7 +68,7 @@ router.put('/:id', async (req, res) => {
             dataInicio: req.body.dataInicio,
             dataFim: req.body.dataFim,
             descricao: req.body.descricao,
-            // Não permitimos alterar o pessoaId aqui
+            
         });
 
         return res.send(experiencia);
@@ -88,7 +81,7 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-// Deletar uma experiência
+
 router.delete('/:id', async (req, res) => {
     try {
         const result = await req.context.models.Experiencia.destroy({

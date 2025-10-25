@@ -1,4 +1,5 @@
-const getFormacaoModel = (sequelize , DataTypes) => {
+import { DataTypes } from "sequelize";
+const getFormacaoModel = (sequelize) => {
     const Formacao = sequelize.define('formacao', {
         instituicao: {
             type: DataTypes.STRING, 

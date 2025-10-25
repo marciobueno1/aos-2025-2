@@ -8,6 +8,9 @@ import routes from './routes/index.js';
 
 const app = express();
 
+// require("dotenv-safe").config();
+// const jwt = require("jsonwebtoken");
+ 
 
 app.use(cors());
 app.use(express.json());
