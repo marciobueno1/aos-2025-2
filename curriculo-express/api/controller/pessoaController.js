@@ -1,4 +1,3 @@
-
 const getAllPessoas = async (req, res) => { 
   try {
     const pessoas = await req.context.models.Pessoa.findAll();
