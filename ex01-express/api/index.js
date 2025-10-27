@@ -1,7 +1,7 @@
 import "dotenv/config";
 import cors from "cors";
 import express from "express";
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 
 import models, { sequelize } from "./models";
 import routes from "./routes";
@@ -33,12 +33,13 @@ app.use(async (req, res, next) => {
 
   const authHeader = req.headers.authorization;
   if (authHeader) {
-    const token = authHeader.split(' ')[1];
+    const token = authHeader.split(" ")[1];
     try {
       const payload = jwt.verify(token, process.env.JWT_SECRET);
       req.context.me = await models.User.findByPk(payload.id);
     } catch (e) {
       // Token is invalid
+      console.log("Invalid token:", e);
     }
   }
 
@@ -58,17 +59,20 @@ const port = process.env.PORT ?? 3000;
 
 const eraseDatabaseOnSync = process.env.ERASE_DATABASE === "true";
 
-sequelize.sync({ force: eraseDatabaseOnSync }).then(async () => {
-  if (eraseDatabaseOnSync) {
-    createUsersWithMessages();
-  }
+sequelize
+  .sync({ force: eraseDatabaseOnSync })
+  .then(async () => {
+    if (eraseDatabaseOnSync) {
+      createUsersWithMessages();
+    }
 
-  app.listen(port, () => {
-    console.log(`Example app listening on port ${port}!`);
+    app.listen(port, () => {
+      console.log(`Example app listening on port ${port}!`);
+    });
+  })
+  .catch((error) => {
+    console.error("Error starting the server:", error);
   });
-}).catch((error) => {
-  console.error("Error starting the server:", error);
-});
 
 const createUsersWithMessages = async () => {
   try {
@@ -76,6 +80,7 @@ const createUsersWithMessages = async () => {
       {
         username: "rwieruch",
         email: "rwieruch@email.com",
+        password: "rwieruch123",
         messages: [
           {
             text: "Published the Road to learn React",
@@ -94,6 +99,7 @@ const createUsersWithMessages = async () => {
       {
         username: "ddavids",
         email: "ddavids@email.com",
+        password: "ddavids123",
         messages: [
           {
             text: "Happy to release ...",
