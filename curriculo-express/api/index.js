@@ -24,6 +24,8 @@ app.use('/experiencias', routes.experienciaRoutes);
 app.use('/formacoes', routes.formacaoRoutes);     
 app.use('/habilidades', routes.habilidadeRoutes);   
 
+app.use(errorMiddleware);
+
 app.get('/', (req, res) => {
   res.send('<h1>API de Currículo com Sequelize e PostgreSQL</h1>');
 });
