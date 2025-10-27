@@ -1,11 +1,15 @@
 const userController = {
   getAllUsers: async (req, res) => {
-    const users = await req.context.models.User.findAll();
+    const users = await req.context.models.User.findAll({
+      attributes: { exclude: ["password"] },
+    });
     return res.send(users);
   },
 
   getUserById: async (req, res) => {
-    const user = await req.context.models.User.findByPk(req.params.userId);
+    const user = await req.context.models.User.findByPk(req.params.userId, {
+      attributes: { exclude: ["password"] },
+    });
     if (!user) {
       return res.sendStatus(404);
     }
