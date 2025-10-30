@@ -1,11 +1,20 @@
 import { Router } from "express";
+import rateLimit from "express-rate-limit";
 import authController from "../controllers/authController";
 import { isAuthenticated } from "../middleware/authMiddleware";
 
 const router = Router();
 
-router.post("/signIn", authController.signIn);
+const signInLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 10, // limit each IP to 10 requests per windowMs
+  message: "Too many sign-in attempts, please try again after a minute",
+});
+
+router.post("/signIn", signInLimiter, authController.signIn);
 
 router.get("/me", isAuthenticated, authController.getMe);
+
+router.post("/signOut", isAuthenticated, authController.signOut);
 
 export default router;

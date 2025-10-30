@@ -1,41 +1,43 @@
-import jwt from "jsonwebtoken";
-
-const createToken = async (user, secret, expiresIn) => {
-  const { id, email, username } = user;
-  return await jwt.sign({ id, email, username }, secret, {
-    expiresIn,
-  });
-};
+import catchAsync from '../utils/catchAsync';
+import authService from '../services/authService';
+import AppError from '../utils/AppError';
 
 const authController = {
-  signIn: async (req, res) => {
+  signIn: catchAsync(async (req, res, next) => {
     const { login, password } = req.body;
-    const user = await req.context.models.User.findByLogin(login);
-
-    if (!user) {
-      return res.status(401).send("Unauthorized");
-    }
-
-    const isValid = await user.validatePassword(password);
-
-    if (!isValid) {
-      return res.status(401).send("Unauthorized");
-    }
-
-    const token = await createToken(user, process.env.JWT_SECRET, "30m");
-
-    return res.send({ token });
-  },
-
-  getMe: async (req, res) => {
-    if (!req.context.me) {
-      return res.status(401).send("Unauthorized");
-    }
-    const { password, ...user } = await req.context.models.User.findByPk(
-      req.context.me.id
+    const token = await authService.signIn(
+      req.context.models.User,
+      login,
+      password
     );
-    return res.send(user);
-  },
+    res.status(200).json({
+      status: 'success',
+      token,
+    });
+  }),
+
+  getMe: catchAsync(async (req, res, next) => {
+    if (!req.context.me) {
+      return next(new AppError('You are not logged in!', 401));
+    }
+    const user = await req.context.models.User.findByPk(req.context.me.id, {
+      attributes: { exclude: ['password'] },
+    });
+    res.status(200).json({
+      status: 'success',
+      data: {
+        user,
+      },
+    });
+  }),
+
+  signOut: catchAsync(async (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    const token = authHeader && authHeader.split(' ')[1];
+    await authService.signOut(req.context.models.BlacklistedToken, token);
+    res.status(200).json({ status: 'success', message: 'Signed out successfully' });
+  }),
 };
 
 export default authController;
+

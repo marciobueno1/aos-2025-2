@@ -4,7 +4,16 @@ import { isAuthenticated, isResourceOwner } from "../middleware/authMiddleware";
 
 const router = Router();
 
-router.get("/", userController.getAllUsers);
+console.debug("API routes/user.js");
+
+router.get(
+  "/",
+  (req, res, next) => {
+    console.debug("Request to get all users received");
+    next();
+  },
+  userController.getAllUsers
+);
 
 router.get("/:userId", userController.getUserById);
 
@@ -13,14 +22,14 @@ router.post("/", userController.createUser);
 router.put(
   "/:userId",
   isAuthenticated,
-  isResourceOwner('User'),
+  isResourceOwner("User"),
   userController.updateUser
 );
 
 router.delete(
   "/:userId",
   isAuthenticated,
-  isResourceOwner('User'),
+  isResourceOwner("User"),
   userController.deleteUser
 );
 

@@ -1,57 +1,60 @@
+import catchAsync from '../utils/catchAsync';
+import tarefaService from '../services/tarefaService';
+
 const tarefaController = {
-  getAllTarefas: async (req, res) => {
-    const tarefas = await req.context.models.Tarefa.findAll();
-    return res.send({ results: tarefas });
-  },
+  getAllTarefas: catchAsync(async (req, res, next) => {
+    const tarefas = await tarefaService.getAll();
+    res.status(200).json({
+      status: 'success',
+      results: tarefas.length,
+      data: {
+        tarefas,
+      },
+    });
+  }),
 
-  getTarefaById: async (req, res) => {
-    const tarefa = await req.context.models.Tarefa.findByPk(
-      req.params.tarefaId
+  getTarefaById: catchAsync(async (req, res, next) => {
+    const tarefa = await tarefaService.getById(req.params.tarefaId);
+    res.status(200).json({
+      status: 'success',
+      data: {
+        tarefa,
+      },
+    });
+  }),
+
+  createTarefa: catchAsync(async (req, res, next) => {
+    const tarefa = await tarefaService.create(req.body);
+    res.status(201).json({
+      status: 'success',
+      data: {
+        tarefa,
+      },
+    });
+  }),
+
+  updateTarefa: catchAsync(async (req, res, next) => {
+    const updatedTarefa = await tarefaService.update(
+      req.params.tarefaId,
+      req.body
     );
-    if (!tarefa) {
-      return res.sendStatus(404);
-    }
-    return res.send(tarefa);
-  },
+    res.status(200).json({
+      status: 'success',
+      data: {
+        tarefa: updatedTarefa,
+      },
+    });
+  }),
 
-  createTarefa: async (req, res) => {
-    const { descricao, concluida } = req.body;
-    try {
-      const tarefa = await req.context.models.Tarefa.create({
-        descricao,
-        concluida,
-      });
-      return res.status(201).send(tarefa);
-    } catch (error) {
-      return res.status(400).send({ error: error.message });
-    }
-  },
-
-  updateTarefa: async (req, res) => {
-    const tarefa = await req.context.models.Tarefa.findByPk(
-      req.params.tarefaId
-    );
-    if (!tarefa) {
-      return res.sendStatus(404);
-    }
-    try {
-      await tarefa.update(req.body);
-      return res.send(tarefa);
-    } catch (error) {
-      return res.status(400).send({ error: error.message });
-    }
-  },
-
-  deleteTarefa: async (req, res) => {
-    const tarefa = await req.context.models.Tarefa.findByPk(
-      req.params.tarefaId
-    );
-    if (!tarefa) {
-      return res.sendStatus(404);
-    }
-    await tarefa.destroy();
-    return res.sendStatus(204);
-  },
+  deleteTarefa: catchAsync(async (req, res, next) => {
+    await tarefaService.delete(req.params.tarefaId);
+    res.status(204).json({
+      status: 'success',
+      data: null,
+    });
+  }),
 };
 
 export default tarefaController;
+
+

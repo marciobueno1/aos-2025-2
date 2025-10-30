@@ -1,42 +1,70 @@
+import catchAsync from "../utils/catchAsync";
+import userService from "../services/userService";
+
 const userController = {
-  getAllUsers: async (req, res) => {
-    const users = await req.context.models.User.findAll({
-      attributes: { exclude: ["password"] },
+  getAllUsers: catchAsync(async (req, res, next) => {
+    console.log("DEBUG: Entering userController.getAllUsers");
+    console.debug("DEBUG: Entering userController.getAllUsers");
+    console.log("console.debug in userController.getAllUsers", console.debug);
+    const users = await userService.getAll(req.context.models);
+    console.debug("DEBUG: users retrieved from userService", users);
+    console.debug("DEBUG: Exiting userController.getAllUsers");
+    res.status(200).json({
+      status: "success",
+      results: users.length,
+      data: {
+        users,
+      },
     });
-    return res.send(users);
-  },
+  }),
 
-  getUserById: async (req, res) => {
-    const user = await req.context.models.User.findByPk(req.params.userId, {
-      attributes: { exclude: ["password"] },
+  getUserById: catchAsync(async (req, res, next) => {
+    console.debug("DEBUG: Entering userController.getUserById");
+    const user = await userService.getById(
+      req.context.models,
+      req.params.userId
+    );
+    console.debug("DEBUG: user retrieved from userService", user);
+    console.debug("DEBUG: Exiting userController.getUserById");
+    res.status(200).json({
+      status: "success",
+      data: {
+        user,
+      },
     });
-    if (!user) {
-      return res.sendStatus(404);
-    }
-    return res.send(user);
-  },
+  }),
 
-  createUser: async (req, res) => {
-    const user = await req.context.models.User.create({
-      username: req.body.username,
-      email: req.body.email,
-      password: req.body.password,
+  createUser: catchAsync(async (req, res, next) => {
+    const user = await userService.create(req.context.models, req.body);
+    res.status(201).json({
+      status: "success",
+      data: {
+        user,
+      },
     });
+  }),
 
-    return res.status(201).send(user);
-  },
+  updateUser: catchAsync(async (req, res, next) => {
+    const user = await userService.update(
+      req.context.models,
+      req.params.userId,
+      req.body
+    );
+    res.status(200).json({
+      status: "success",
+      data: {
+        user,
+      },
+    });
+  }),
 
-  updateUser: async (req, res) => {
-    const user = req.resource; // Resource attached by isResourceOwner middleware
-    await user.update(req.body);
-    return res.send(user);
-  },
-
-  deleteUser: async (req, res) => {
-    const user = req.resource; // Resource attached by isResourceOwner middleware
-    await user.destroy();
-    return res.sendStatus(204);
-  },
+  deleteUser: catchAsync(async (req, res, next) => {
+    await userService.delete(req.context.models, req.params.userId);
+    res.status(204).json({
+      status: "success",
+      data: null,
+    });
+  }),
 };
 
 export default userController;

@@ -3,6 +3,7 @@ import Sequelize from "sequelize";
 import getUserModel from "./user";
 import getMessageModel from "./message";
 import getTarefaModel from "./tarefa";
+import getBlacklistedTokenModel from "./blacklistedToken";
 
 //POSTGRES_URL
 const sequelize = new Sequelize(process.env.POSTGRES_URL, {
@@ -23,6 +24,7 @@ const models = {
   User: getUserModel(sequelize, Sequelize),
   Message: getMessageModel(sequelize, Sequelize),
   Tarefa: getTarefaModel(sequelize, Sequelize),
+  BlacklistedToken: getBlacklistedTokenModel(sequelize, Sequelize),
 };
 
 Object.keys(models).forEach((key) => {
