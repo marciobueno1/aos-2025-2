@@ -1,6 +1,4 @@
 import "dotenv/config";
-console.log("process.env.DEBUG_LOGS", process.env.DEBUG_LOGS);
-
 import "./utils/logger.js";
 import cors from "cors";
 import express from "express";
@@ -48,7 +46,6 @@ app.use(async (req, res, next) => {
       console.debug("DEBUG: User found and set in context:", req.context.me);
     } catch (e) {
       // Token is invalid
-      console.debug("DEBUG: Invalid token:", e);
       console.log("Invalid token:", e);
     }
   }

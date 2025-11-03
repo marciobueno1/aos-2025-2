@@ -3,9 +3,7 @@ import userService from "../services/userService";
 
 const userController = {
   getAllUsers: catchAsync(async (req, res, next) => {
-    console.log("DEBUG: Entering userController.getAllUsers");
     console.debug("DEBUG: Entering userController.getAllUsers");
-    console.log("console.debug in userController.getAllUsers", console.debug);
     const users = await userService.getAll(req.context.models);
     console.debug("DEBUG: users retrieved from userService", users);
     console.debug("DEBUG: Exiting userController.getAllUsers");
