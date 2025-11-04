@@ -24,11 +24,11 @@ A seguir, uma descrição dos principais módulos utilizados no projeto, conform
 
 A aplicação segue uma arquitetura modular, com o código organizado nos seguintes diretórios dentro de `api/`:
 
-- **controllers**: Contém a lógica de negócio da aplicação (ex: `userController.js`, `authController.js`).
+- **controllers**: Responsável por receber as requisições HTTP, validar dados e orquestrar as chamadas para a camada de serviço. Lida com o ciclo de vida da requisição/resposta (ex: `userController.js`).
 - **middleware**: Contém middlewares do Express para tarefas como autenticação e tratamento de erros.
 - **models**: Define os modelos do Sequelize, que representam as tabelas do banco de dados.
 - **routes**: Define as rotas da API (ex: `user.js`, `auth.js`).
-- **services**: Contém a lógica de interação com serviços externos.
+- **services**: Contém a lógica de negócio central da aplicação. É aqui que as regras de negócio são implementadas, interagindo com a camada de `models` e outros serviços.
 - **utils**: Contém funções utilitárias.
 
 ## Como Executar o Projeto
