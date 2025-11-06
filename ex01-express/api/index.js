@@ -7,13 +7,23 @@ import jwt from "jsonwebtoken";
 import models, { sequelize } from "./models";
 import { Op } from "sequelize";
 import routes from "./routes";
+import { createUsersWithMessages } from "./seeders/seed.js";
+import { scheduleTokenCleanup } from "./cron/tokenCleanup.js";
 import errorMiddleware from "./middleware/errorMiddleware"; // Import the error middleware
 
 const app = express();
 app.set("trust proxy", true);
 
-var corsOptions = {
-  origin: ["http://example.com", "*"],
+const allowedOrigins = ["http://example.com"];
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 app.use(cors(corsOptions));
@@ -74,20 +84,7 @@ sequelize
       createUsersWithMessages();
     }
 
-    // Schedule a job to clean up expired blacklisted tokens every 24 hours
-    setInterval(async () => {
-      try {
-        await models.BlacklistedToken.destroy({
-          where: {
-            expiresAt: {
-              [Op.lt]: new Date(),
-            },
-          },
-        });
-      } catch (error) {
-        console.error("Error cleaning up expired tokens:", error);
-      }
-    }, 24 * 60 * 60 * 1000); // 24 hours
+    scheduleTokenCleanup();
 
     app.listen(port, () => {
       console.log(`Example app listening on port ${port}!`);
@@ -96,47 +93,3 @@ sequelize
   .catch((error) => {
     console.error("Error starting the server:", error);
   });
-
-const createUsersWithMessages = async () => {
-  try {
-    await models.User.create(
-      {
-        username: "rwieruch",
-        email: "rwieruch@email.com",
-        password: "Rwieruch123!",
-        messages: [
-          {
-            text: "Published the Road to learn React",
-          },
-          {
-            text: "Published also the Road to learn Express + PostgreSQL",
-          },
-        ],
-      },
-      {
-        include: [models.Message],
-      }
-    );
-
-    await models.User.create(
-      {
-        username: "ddavids",
-        email: "ddavids@email.com",
-        password: "Ddavids123!",
-        messages: [
-          {
-            text: "Happy to release ...",
-          },
-          {
-            text: "Published a complete ...",
-          },
-        ],
-      },
-      {
-        include: [models.Message],
-      }
-    );
-  } catch (error) {
-    console.error(error);
-  }
-};
