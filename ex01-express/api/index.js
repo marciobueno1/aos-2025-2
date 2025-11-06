@@ -12,7 +12,9 @@ import { scheduleTokenCleanup } from "./cron/tokenCleanup.js";
 import errorMiddleware from "./middleware/errorMiddleware"; // Import the error middleware
 
 const app = express();
-app.set("trust proxy", true);
+if (process.env.DEBUG !== "true") {
+  app.set("trust proxy", true);
+}
 
 const allowedOrigins = ["http://example.com"];
 

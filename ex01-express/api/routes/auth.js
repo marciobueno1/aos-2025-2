@@ -11,7 +11,11 @@ const signInLimiter = rateLimit({
   message: "Too many sign-in attempts, please try again after a minute",
 });
 
-router.post("/signIn", signInLimiter, authController.signIn);
+if (process.env.DEBUG !== "true") {
+  router.post("/signIn", signInLimiter, authController.signIn);
+} else {
+  router.post("/signIn", authController.signIn);
+}
 
 router.get("/me", isAuthenticated, authController.getMe);
 
