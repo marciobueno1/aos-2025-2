@@ -1,16 +1,11 @@
-// Simula a verificação se um utilizador está logado.
 export const isAuthenticated = (req, res, next) => {
   console.log('Middleware: Verificando autenticação...');
-  // Simula um utilizador/pessoa logada para teste.
-  // Num sistema real, este 'user' viria da decodificação do token/sessão
-  // e provavelmente conteria o ID da Pessoa associada.
   req.user = { id: 1 }; // !!! Exemplo: Assume que a Pessoa com ID 1 está logada !!!
   
   if (req.user && req.user.id) {
     console.log(`Utilizador autenticado (simulado com Pessoa ID: ${req.user.id}).`);
-    next(); // Passa para a próxima função
+    next();
   } else {
-     // Se não estivesse autenticado, retornaria erro 401
      return res.status(401).send({ message: 'Acesso não autorizado. Autenticação necessária.' });
   }
 };
@@ -43,17 +38,16 @@ export const isResourceOwner = (modelName) => {
       }
 
       let isOwner = false;
-      // Verifica a propriedade com base no tipo de modelo
+      
       if (modelName === 'Pessoa') {
-        // Se estamos a modificar a própria Pessoa, o ID deve corresponder
+        
         isOwner = resource.id === loggedInPessoaId;
       } else if (resource.pessoaId) {
-        // Se for Experiencia, Formacao ou Habilidade, verifica a chave estrangeira
+       
         isOwner = resource.pessoaId === loggedInPessoaId;
       } else {
          console.warn(`Modelo ${modelName} não tem campo 'pessoaId' esperado para verificação de propriedade.`);
-         // Decide como lidar com modelos sem pessoaId (talvez permitir acesso de admin?)
-         // Por agora, negamos o acesso para segurança.
+         // Sem campo pessoaId, não podemos verificar propriedade
          isOwner = false;
       }
 

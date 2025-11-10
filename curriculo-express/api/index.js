@@ -30,7 +30,7 @@ app.get('/', (req, res) => {
   res.send('<h1>API de Currículo com Sequelize e PostgreSQL</h1>');
 });
 
-const eraseDatabaseOnSync = true; // Mantenha true para desenvolvimento
+const eraseDatabaseOnSync = false; // Mantenha true para desenvolvimento
 
 sequelize.sync({ force: eraseDatabaseOnSync }).then(async () => {
   console.log('Banco de dados sincronizado!');
