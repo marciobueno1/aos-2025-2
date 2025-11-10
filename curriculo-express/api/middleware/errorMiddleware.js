@@ -3,4 +3,5 @@ const errorMiddleware = (err, req, res, next) => {
     res.status(500).send('erro interno do servidor');
 
 };
-module.exports = errorMiddleware;
+
+export default errorMiddleware;

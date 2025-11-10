@@ -2,7 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import models, { sequelize } from './models/index.js'; 
-
+import errorMiddleware from './middleware/errorMiddleware.js';
 import routes from './routes/index.js'; 
 
 const app = express();

@@ -30,8 +30,6 @@ const getExperienciaById = async (req, res) => {
     }
 };
 
-
-
 const createExperiencia = async (req, res) => {
     try {
         const experiencia = await req.context.models.Pessooa.create({
